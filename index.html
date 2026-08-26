@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labirinto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<main class="game">
+
+    <header>
+        <h1>🌀 LABIRINTO</h1>
+        <p id="fase">Fase 1 de 3</p>
+    </header>
+
+    <div class="info">
+        <span id="mensagem">
+            Leve a bolinha até a saída!
+        </span>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="labirinto"></canvas>
+    </div>
+
+    <div class="controles">
+        <button id="reiniciar">↻ Reiniciar</button>
+    </div>
+
+
+    <!-- VITÓRIA -->
+    <div id="vitoria" class="tela-overlay">
+        <div class="caixa">
+            <div class="emoji">🎉</div>
+
+            <h2>FASE CONCLUÍDA!</h2>
+
+            <p id="textoVitoria"></p>
+
+            <button id="proxima">
+                PRÓXIMA FASE →
+            </button>
+        </div>
+    </div>
+
+
+    <!-- JUMPSCARE -->
+    <div id="jumpscare" class="jumpscare">
+
+        <img
+            id="imagemSusto"
+            src=""
+            alt=""
+        >
+
+    </div>
+
+
+    <!-- TELA PRETA -->
+    <div id="telaPreta" class="tela-preta">
+
+        <div id="mensagemPreta">
+            ...
+        </div>
+
+    </div>
+
+
+    <!-- FINAL -->
+    <div id="final" class="final">
+
+        <div class="final-caixa">
+
+            <div class="final-emoji">
+                💀
+            </div>
+
+            <h2>KKKKKKKKKK</h2>
+
+            <p>
+                você foi enganado.
+            </p>
+
+            <button onclick="location.reload()">
+                JOGAR NOVAMENTE
+            </button>
+
+        </div>
+
+    </div>
+
+</main>
+
+<script src="script.js"></script>
+
+</body>
+  </html>
