@@ -1,71 +1,55 @@
 // =====================================================
-// CONFIGURAÇÕES
+// CONFIGURAÇÕES DO JUMPSCARE
 // =====================================================
 
-
-// IMAGEM DO JUMPSCARE
 const IMAGEM_SUSTO =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT-w-Ls3oUup5kGBGv2DHKfA7NJP_2GQoBxxILSta3R-1FLGKPvIaLqMc_&s=10";
 
-
-// ÁUDIO DO PRIMEIRO SUSTO
 const SOM_SUSTO =
     "bloodbath-98-death-scream.mp3";
 
-
-// ÁUDIO QUE TOCA DEPOIS DA TELA PRETA
 const SOM_FAAAAH =
     "fahhhhhhhhhhhhhh.mp3";
 
 
 // =====================================================
-// ELEMENTOS
+// ELEMENTOS DA PÁGINA
 // =====================================================
 
-const canvas =
-    document.getElementById("labirinto");
+const canvas = document.getElementById("labirinto");
+const ctx = canvas.getContext("2d");
 
-const ctx =
-    canvas.getContext("2d");
+const faseTexto = document.getElementById("fase");
+const mensagem = document.getElementById("mensagem");
 
-const faseTexto =
-    document.getElementById("fase");
+const vitoria = document.getElementById("vitoria");
+const textoVitoria = document.getElementById("textoVitoria");
+const proxima = document.getElementById("proxima");
 
-const mensagem =
-    document.getElementById("mensagem");
+const reiniciar = document.getElementById("reiniciar");
 
-const vitoria =
-    document.getElementById("vitoria");
+const jumpscare = document.getElementById("jumpscare");
+const imagemSusto = document.getElementById("imagemSusto");
 
-const textoVitoria =
-    document.getElementById("textoVitoria");
-
-const proxima =
-    document.getElementById("proxima");
-
-const reiniciar =
-    document.getElementById("reiniciar");
-
-const jumpscare =
-    document.getElementById("jumpscare");
-
-const imagemSusto =
-    document.getElementById("imagemSusto");
-
-const telaPreta =
-    document.getElementById("telaPreta");
-
-const final =
-    document.getElementById("final");
+const telaPreta = document.getElementById("telaPreta");
+const final = document.getElementById("final");
 
 
 // =====================================================
-// FASES
+// LABIRINTOS
+//
+// 1 = parede
+// 0 = caminho
+// P = jogador
+// S = saída
 // =====================================================
 
 const fases = [
 
+    // =================================================
     // FASE 1
+    // =================================================
+
     [
         "11111111111",
         "1P000000001",
@@ -79,7 +63,10 @@ const fases = [
     ],
 
 
+    // =================================================
     // FASE 2
+    // =================================================
+
     [
         "1111111111111",
         "1P00010000001",
@@ -97,29 +84,33 @@ const fases = [
     ],
 
 
+    // =================================================
     // FASE 3
+    // =================================================
+
     [
         "111111111111111",
-        "1P0000001000001",
-        "111111110111101",
-        "100000010000101",
-        "101111011111101",
-        "101000010000001",
-        "101011111111101",
-        "101000000000101",
+        "1P0000101000001",
+        "111110101010111",
+        "100010100010001",
+        "111010111011101",
+        "100010001000101",
+        "101011101111101",
+        "101000100000101",
         "101111111110101",
-        "100000000010101",
-        "111111111010101",
-        "100000001010001",
-        "101111101011101",
-        "1000000010000S1",
+        "101000100000101",
+        "101010101111101",
+        "100010101000001",
+        "101110101011101",
+        "1000100000100S1",
         "111111111111111"
     ]
+
 ];
 
 
 // =====================================================
-// ESTADO
+// VARIÁVEIS DO JOGO
 // =====================================================
 
 let faseAtual = 0;
@@ -147,9 +138,12 @@ let jogando = false;
 
 function carregarFase() {
 
-    mapa =
-        fases[faseAtual]
-        .map(linha => linha.split(""));
+    // Copia o mapa para não modificar
+    // a fase original.
+
+    mapa = fases[faseAtual].map(
+        linha => linha.split("")
+    );
 
 
     jogador = {
@@ -163,6 +157,8 @@ function carregarFase() {
         y: 0
     };
 
+
+    // Procura jogador e saída.
 
     for (
         let y = 0;
@@ -192,12 +188,16 @@ function carregarFase() {
 
                 mapa[y][x] = "0";
             }
+
         }
+
     }
 
 
+    // Atualiza o texto.
+
     faseTexto.textContent =
-        `Fase ${faseAtual + 1} de 3`;
+        `Fase ${faseAtual + 1} de ${fases.length}`;
 
 
     if (faseAtual === 0) {
@@ -205,15 +205,20 @@ function carregarFase() {
         mensagem.textContent =
             "Leve a bolinha até a saída!";
 
-    } else if (faseAtual === 1) {
+    }
+
+    else if (faseAtual === 1) {
 
         mensagem.textContent =
-            "Agora ficou mais difícil...";
+            "Agora ficou um pouco mais difícil...";
 
-    } else {
+    }
+
+    else {
 
         mensagem.textContent =
             "Última fase. Concentre-se.";
+
     }
 
 
@@ -226,7 +231,7 @@ function carregarFase() {
 
 
 // =====================================================
-// TAMANHO
+// TAMANHO DO CANVAS
 // =====================================================
 
 function ajustarCanvas() {
@@ -240,8 +245,8 @@ function ajustarCanvas() {
 
     const tamanhoMaximo =
         Math.min(
-            window.innerWidth * .90,
-            window.innerHeight * .65,
+            window.innerWidth * 0.90,
+            window.innerHeight * 0.65,
             650
         );
 
@@ -249,26 +254,20 @@ function ajustarCanvas() {
     tamanhoCelula =
         Math.floor(
             tamanhoMaximo /
-            Math.max(
-                largura,
-                altura
-            )
+            Math.max(largura, altura)
         );
 
 
     canvas.width =
-        largura *
-        tamanhoCelula;
-
+        largura * tamanhoCelula;
 
     canvas.height =
-        altura *
-        tamanhoCelula;
+        altura * tamanhoCelula;
 }
 
 
 // =====================================================
-// DESENHAR
+// DESENHAR LABIRINTO
 // =====================================================
 
 function desenhar() {
@@ -281,9 +280,9 @@ function desenhar() {
     );
 
 
-    // FUNDO
-    ctx.fillStyle =
-        "#ffffff";
+    // Fundo
+
+    ctx.fillStyle = "#ffffff";
 
     ctx.fillRect(
         0,
@@ -293,7 +292,8 @@ function desenhar() {
     );
 
 
-    // PAREDES
+    // Paredes
+
     for (
         let y = 0;
         y < mapa.length;
@@ -306,88 +306,85 @@ function desenhar() {
             x++
         ) {
 
-            if (
-                mapa[y][x] === "1"
-            ) {
+            if (mapa[y][x] === "1") {
 
                 ctx.fillStyle =
                     "#202028";
 
-
                 ctx.fillRect(
 
-                    x *
-                    tamanhoCelula,
+                    x * tamanhoCelula,
 
-                    y *
-                    tamanhoCelula,
+                    y * tamanhoCelula,
 
                     tamanhoCelula,
 
                     tamanhoCelula
+
                 );
+
             }
+
         }
+
     }
 
 
-    // SAÍDA
+    // Saída
+
     ctx.fillStyle =
         "#31c46c";
 
-
     ctx.fillRect(
 
-        saida.x *
-        tamanhoCelula + 4,
+        saida.x * tamanhoCelula + 4,
 
-        saida.y *
-        tamanhoCelula + 4,
+        saida.y * tamanhoCelula + 4,
 
         tamanhoCelula - 8,
 
         tamanhoCelula - 8
+
     );
 
 
-    // JOGADOR
+    // Jogador
+
     ctx.fillStyle =
         "#5546e8";
 
-
     ctx.beginPath();
-
 
     ctx.arc(
 
-        jogador.x *
-        tamanhoCelula +
+        jogador.x * tamanhoCelula +
         tamanhoCelula / 2,
 
-        jogador.y *
-        tamanhoCelula +
+        jogador.y * tamanhoCelula +
         tamanhoCelula / 2,
 
-        tamanhoCelula * .3,
+        tamanhoCelula * 0.30,
 
         0,
 
         Math.PI * 2
+
     );
 
-
     ctx.fill();
+
 }
 
 
 // =====================================================
-// MOVIMENTO
+// MOVIMENTAR JOGADOR
 // =====================================================
 
 function mover(dx, dy) {
 
-    if (!jogando)
+    if (!jogando) {
         return;
+    }
 
 
     const novoX =
@@ -397,32 +394,40 @@ function mover(dx, dy) {
         jogador.y + dy;
 
 
+    // Impede sair do mapa.
+
     if (
         novoY < 0 ||
         novoY >= mapa.length ||
         novoX < 0 ||
         novoX >= mapa[0].length
     ) {
+
         return;
+
     }
 
+
+    // Impede atravessar parede.
 
     if (
         mapa[novoY][novoX] === "1"
     ) {
+
         return;
+
     }
 
 
-    jogador.x =
-        novoX;
+    jogador.x = novoX;
 
-    jogador.y =
-        novoY;
+    jogador.y = novoY;
 
 
     desenhar();
 
+
+    // Chegou na saída.
 
     if (
         jogador.x === saida.x &&
@@ -430,20 +435,23 @@ function mover(dx, dy) {
     ) {
 
         terminouFase();
+
     }
+
 }
 
 
 // =====================================================
-// TECLADO
+// CONTROLES DO COMPUTADOR
 // =====================================================
 
 document.addEventListener(
     "keydown",
-    event => {
+    function(event) {
 
-        if (!jogando)
+        if (!jogando) {
             return;
+        }
 
 
         switch (event.key) {
@@ -482,33 +490,34 @@ document.addEventListener(
                 mover(1, 0);
 
                 break;
+
         }
+
     }
 );
 
 
 // =====================================================
-// TOUCH
+// CONTROLES DO CELULAR
 // =====================================================
 
-let toqueX = 0;
-let toqueY = 0;
+let toqueInicialX = 0;
+let toqueInicialY = 0;
 
 
 canvas.addEventListener(
     "touchstart",
-    event => {
+    function(event) {
 
         event.preventDefault();
 
         const toque =
             event.touches[0];
 
-
-        toqueX =
+        toqueInicialX =
             toque.clientX;
 
-        toqueY =
+        toqueInicialY =
             toque.clientY;
 
     },
@@ -520,7 +529,7 @@ canvas.addEventListener(
 
 canvas.addEventListener(
     "touchend",
-    event => {
+    function(event) {
 
         event.preventDefault();
 
@@ -530,12 +539,11 @@ canvas.addEventListener(
 
         const dx =
             toque.clientX -
-            toqueX;
-
+            toqueInicialX;
 
         const dy =
             toque.clientY -
-            toqueY;
+            toqueInicialY;
 
 
         const distancia =
@@ -545,28 +553,46 @@ canvas.addEventListener(
             );
 
 
-        if (distancia < 20)
-            return;
+        // Ignora toques muito pequenos.
 
+        if (distancia < 20) {
+            return;
+        }
+
+
+        // Movimento horizontal.
 
         if (
             Math.abs(dx) >
             Math.abs(dy)
         ) {
 
-            if (dx > 0)
+            if (dx > 0) {
+
                 mover(1, 0);
 
-            else
+            } else {
+
                 mover(-1, 0);
 
-        } else {
+            }
 
-            if (dy > 0)
+        }
+
+        // Movimento vertical.
+
+        else {
+
+            if (dy > 0) {
+
                 mover(0, 1);
 
-            else
+            } else {
+
                 mover(0, -1);
+
+            }
+
         }
 
     },
@@ -585,7 +611,9 @@ function terminouFase() {
     jogando = false;
 
 
-    // FASE 3
+    // Se for a terceira fase,
+    // começa o jumpscare.
+
     if (faseAtual === 2) {
 
         setTimeout(
@@ -597,6 +625,8 @@ function terminouFase() {
     }
 
 
+    // Fases 1 e 2.
+
     textoVitoria.textContent =
         `Você completou a fase ${faseAtual + 1}!`;
 
@@ -604,16 +634,17 @@ function terminouFase() {
     vitoria.classList.add(
         "mostrar"
     );
+
 }
 
 
 // =====================================================
-// PRÓXIMA FASE
+// BOTÃO PRÓXIMA FASE
 // =====================================================
 
 proxima.addEventListener(
     "click",
-    () => {
+    function() {
 
         vitoria.classList.remove(
             "mostrar"
@@ -624,19 +655,21 @@ proxima.addEventListener(
 
 
         carregarFase();
+
     }
 );
 
 
 // =====================================================
-// REINICIAR
+// BOTÃO REINICIAR
 // =====================================================
 
 reiniciar.addEventListener(
     "click",
-    () => {
+    function() {
 
         carregarFase();
+
     }
 );
 
@@ -650,17 +683,21 @@ function ativarJumpscare() {
     jogando = false;
 
 
-    // COLOCA IMAGEM
+    // Coloca a imagem.
+
     imagemSusto.src =
         IMAGEM_SUSTO;
 
+
+    // Mostra a imagem.
 
     jumpscare.classList.add(
         "mostrar"
     );
 
 
-    // PRIMEIRO ÁUDIO
+    // Toca o primeiro áudio.
+
     const audioSusto =
         new Audio(SOM_SUSTO);
 
@@ -669,18 +706,20 @@ function ativarJumpscare() {
 
 
     audioSusto.play()
-        .catch(() => {});
+        .catch(function() {
+
+            console.log(
+                "O navegador bloqueou o áudio."
+            );
+
+        });
 
 
-    /*
-       DEPOIS DO SUSTO:
-
-       A imagem desaparece.
-       A tela fica completamente preta.
-    */
+    // Depois de 1,8 segundos,
+    // fica tudo preto.
 
     setTimeout(
-        () => {
+        function() {
 
             jumpscare.classList.remove(
                 "mostrar"
@@ -692,10 +731,8 @@ function ativarJumpscare() {
             );
 
 
-            /*
-               ESPERA 2,5 SEGUNDOS
-               ANTES DO "FAAAAAAH"
-            */
+            // Espera 2,5 segundos
+            // antes do FAAAAAH.
 
             setTimeout(
                 tocarFaaaaah,
@@ -703,14 +740,14 @@ function ativarJumpscare() {
             );
 
         },
-
         1800
     );
+
 }
 
 
 // =====================================================
-// FAAAAAH
+// SEGUNDO ÁUDIO — FAAAAAH
 // =====================================================
 
 function tocarFaaaaah() {
@@ -723,16 +760,20 @@ function tocarFaaaaah() {
 
 
     audioFah.play()
-        .catch(() => {});
+        .catch(function() {
+
+            console.log(
+                "O navegador bloqueou o áudio."
+            );
+
+        });
 
 
-    /*
-       DEPOIS DO ÁUDIO,
-       MOSTRA O FINAL.
-    */
+    // Espera o áudio terminar
+    // antes de mostrar o final.
 
     setTimeout(
-        () => {
+        function() {
 
             telaPreta.classList.remove(
                 "mostrar"
@@ -744,32 +785,34 @@ function tocarFaaaaah() {
             );
 
         },
-
         3500
     );
+
 }
 
 
 // =====================================================
-// REDIMENSIONAMENTO
+// REDIMENSIONAR NO CELULAR/PC
 // =====================================================
 
 window.addEventListener(
     "resize",
-    () => {
+    function() {
 
         if (mapa.length > 0) {
 
             ajustarCanvas();
 
             desenhar();
+
         }
+
     }
 );
 
 
 // =====================================================
-// INICIAR
+// COMEÇAR JOGO
 // =====================================================
 
 carregarFase();
